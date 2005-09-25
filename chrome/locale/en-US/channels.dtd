@@ -11,3 +11,5 @@
 <!ENTITY changechannel.description			"Clicking Finish will change the update channel. You may choose to launch a check for updates now to download an available build on this channel.">
 <!ENTITY launchUpdate.label					"Check for updates">
 <!ENTITY downloading.label					"&brandShortName; is currently downloading an update. If you change the channel this download will be cancelled.">
+
+<!ENTITY noupdatesfound.changechannel.label	"Change...">

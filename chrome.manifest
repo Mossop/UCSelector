@@ -1,6 +1,7 @@
-content			channels																							file:chrome/content/
-skin				channels					classic/1.0													file:chrome/skin/
-locale			channels					en-US																file:chrome/locale/en-US/
+content			channels																								file:chrome/content/
+skin				channels						classic/1.0													file:chrome/skin/
+locale			channels						en-US																file:chrome/locale/en-US/
 
-overlay			chrome://browser/content/preferences/preferences.xul	chrome://channels/content/browserprefs.xul
+overlay			chrome://browser/content/preferences/preferences.xul		chrome://channels/content/browserprefs.xul
 overlay			chrome://messenger/content/preferences/preferences.xul	chrome://channels/content/messengerprefs.xul
+overlay			chrome://mozapps/content/update/updates.xul							chrome://channels/content/updates.xul

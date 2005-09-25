@@ -71,7 +71,6 @@ var UpdateChannels =
     if (UpdateChannels.channelPrefsFile.isWritable() && updates.canUpdate)
     {
       document.documentElement.goTo("choosechannel");
-      var channel = null;
       try
       {
         UpdateChannels.currentChannel = UpdateChannels.defaultPrefs.getCharPref("app.update.channel");
