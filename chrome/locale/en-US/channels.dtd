@@ -1,0 +1,4 @@
+<!ENTITY SelectUpdateChannel.title			"Change Update Channel">
+<!ENTITY SelectUpdateChannel.description	"Select the update channel you wish to use">
+
+<!ENTITY channelList.label					"Update channel:">

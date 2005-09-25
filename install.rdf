@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>updatechannel@blueprintit.co.uk</em:id>
+    <em:version>0.1</em:version>
+    
+    <!-- Firefox version --> 
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>1.4</em:minVersion>
+        <em:maxVersion>1.6a1</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+    
+    <!-- Thunderbird version -->
+    <em:targetApplication>
+      <Description>
+        <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
+        <em:minVersion>1.4</em:minVersion>
+        <em:maxVersion>1.6a1</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <!-- Front End MetaData -->
+    <em:name>Update Channels</em:name>
+    <em:description>Allows you to change the update channel.</em:description>
+    <em:creator>Mossop</em:creator>
+    <em:homepageURL>http://users.blueprintit.co.uk/~dave/web/firefox/updatechannel/index.html</em:homepageURL>
+    <em:updateURL>http://users.blueprintit.co.uk/~dave/web/firefox/update.rdf?guid=%ITEM_ID%&amp;version=%ITEM_VERSION%&amp;app=%APP_ID%&amp;appver=%APP_VERSION%</em:updateURL>
+    
+  </Description>      
+</RDF>

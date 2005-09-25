@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<RDF xmlns:uc="http://mossop.blueprintit.co.uk/updatechannel#"
+     xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+  <Seq about="urn:blueprintit:updatechannel:root">
+    <li resource="urn:blueprintit:updatechannel:default"/>
+    <li resource="urn:blueprintit:updatechannel:beta"/>
+    <li resource="urn:blueprintit:updatechannel:nightly"/>
+  </Seq>
+
+  <Description about="urn:blueprintit:updatechannel:default"
+                   uc:id="default"
+                   uc:title="Default">
+    <uc:description>The default update channel.</uc:description>
+  </Description>
+
+  <Description about="urn:blueprintit:updatechannel:beta"
+                   uc:id="beta"
+                   uc:title="Beta">
+    <uc:description>The beta update channel receives all beta, release candidate and release builds.
+     Updates from this channel should be fairly stable though some bugs may be present.</uc:description>
+  </Description>
+
+  <Description about="urn:blueprintit:updatechannel:nightly"
+                   uc:id="nightly"
+                   uc:title="Nightly">
+    <uc:description>The nightly update channel allows you to receive the latest bleeding edge
+     releases. Updates from this channel may be unstable.</uc:description>
+  </Description>
+
+</RDF>
