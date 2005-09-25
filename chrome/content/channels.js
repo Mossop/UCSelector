@@ -129,12 +129,15 @@ var UpdateChannels =
     try
     {
       var channel=result.Value;
-      var line = "pref(\"app.update.channel\", \""+channel+"\");\n";
 
       var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
                        .createInstance(Components.interfaces.nsIFileOutputStream);
 
       foStream.init(UpdateChannels.channelPrefsFile, 0x02 | 0x08 | 0x20, UpdateChannels.channelPrefsFile.permissions, 0); // write, create, truncate
+
+      var line = "// Update channel changed with Update Channel Selector.\n";
+      foStream.write(line, line.length);      
+      line = "pref(\"app.update.channel\", \""+channel+"\");\n";
       foStream.write(line, line.length);
       foStream.close();
 

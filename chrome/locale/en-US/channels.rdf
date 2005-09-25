@@ -12,7 +12,8 @@
   <Description about="urn:blueprintit:updatechannel:default"
                    uc:id="default"
                    uc:title="Default">
-    <uc:description>The default update channel.</uc:description>
+    <uc:description>The default update channel will receive all release builds and security fixes.
+     Unless you are interesting in testing the latest features, this is the update channel for you.</uc:description>
   </Description>
 
   <Description about="urn:blueprintit:updatechannel:beta"
