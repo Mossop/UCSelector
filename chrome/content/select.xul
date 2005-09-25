@@ -90,7 +90,7 @@
   
   <wizardpage id="changechannel" pageid="changechannel" label="&changechannel.label;" onpageshow="UpdateChannels.checkDownloadState()">
   
-    <description>&changechannel.description;</description>
+    <description id="changechanneldesc">&changechannel.description;</description>
     
     <checkbox id="launchUpdate" checked="true" label="&launchUpdate.label;"/>
   
