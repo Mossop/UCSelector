@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is Nightly Tester Tools.
+ * The Original Code is Update Channel Selector.
  *
  * The Initial Developer of the Original Code is
  *      Dave Townsend <dave.townsend@blueprintit.co.uk>.
@@ -80,12 +80,86 @@ var UpdateChannels =
 
         var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefService);
-        prefs.resetPrefs();
       }
       catch (e)
       {
       }
     }
+  },
+  
+  updateDisplay: function()
+  {
+  },
+  
+  fetchChannelDetails: function(channel)
+  {
+    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefService);
+    var defaults = prefService.getDefaultBranch(null);
+    prefService=prefService.QueryInterface(Components.interfaces.nsIPrefBranch);
+
+    // Use the override URL if specified.
+    var url = null;
+    
+    try
+    {
+      url=prefService.getPref("getCharPref", "app.update.url.override");
+    }
+    catch (e)
+    {
+    }
+    
+    // Otherwise, construct the update URL from component parts.
+    if (!url)
+    {
+      try
+      {
+        url = defaults.getCharPref("app.update.url");
+      }
+      catch (e)
+      {
+      }
+    }
+    
+    if (url && url != "")
+    {
+      var locale = null;
+      try
+      {
+        return prefService.getComplexValue("general.useragent.locale",
+                                    Components.interfaces.nsIPrefLocalizedString).data;
+      }
+      catch (e)
+      {
+        locale = prefService.getCharPref("general.useragent.locale");
+      }
+ 
+  		var gApp = Components.classes['@mozilla.org/xre/app-info;1']
+  		                .getService(Components.interfaces.nsIXULAppInfo)
+                      .QueryInterface(Components.interfaces.nsIXULRuntime);
+                      
+      url = url.replace(/%PRODUCT%/g, gApp.name);
+      url = url.replace(/%VERSION%/g, gApp.version);
+      url = url.replace(/%BUILD_ID%/g, "0000000000");
+      url = url.replace(/%BUILD_TARGET%/g, gApp.OS + "_" + gApp.XPCOMABI);
+      url = url.replace(/%LOCALE%/g, locale);
+      url = url.replace(/%CHANNEL%/g, channel);
+      url = url.replace(/\+/g, "%2B");
+    }
+    dump(url+"\n");
+    req = new XMLHttpRequest();
+    req.open('GET', url, true);
+    req.onreadystatechange = function (aEvt)
+    {
+      if (req.readyState == 4)
+      {
+        if(req.status == 200)
+          dump(req.responseText+"\n");
+        else
+          dump("Error loading page\n");
+      }
+    };
+    req.send(null); 
   },
   
   channelSelected: function()
@@ -94,6 +168,7 @@ var UpdateChannels =
                         .getService(Components.interfaces.nsIRDFService);
 
     var descprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#description");
+    var idprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#id");
     
     var list = document.getElementById("channelList");
     var desc = document.getElementById("channelDescription");
@@ -101,15 +176,19 @@ var UpdateChannels =
     var ds = list.database;
     var res = list.selectedItem.resource;
     var result = ds.GetTarget(res,descprop,true);
+    var id = ds.GetTarget(res,idprop,true);
     
     var text = null;
     try
     {
       result=result.QueryInterface(Components.interfaces.nsIRDFLiteral);
       text=result.Value;
+      id=id.QueryInterface(Components.interfaces.nsIRDFLiteral);
+      UpdateChannels.fetchChannelDetails(id.Value);
     }
     catch (e)
     {
+      dump(e+"\n");
       text="No description";
     }
     

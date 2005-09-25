@@ -11,7 +11,7 @@
    - for the specific language governing rights and limitations under the
    - License.
    -
-   - The Original Code is Nightly Tester Tools.
+   - The Original Code is Update Channel Selector.
    -
    - The Initial Developer of the Original Code is
    -     Dave Townsend <dave.townsend@blueprintit.co.uk>.
@@ -40,27 +40,9 @@
    - $Revision$
    -->
 
-<project name="nightly" default="package">
+<project name="updatechannel" default="package">
 
-	<property name="xpidl" value="c:\\mozilla\\moztools\\bin\\xpidl.exe"/>
-	
-	<target name="components">
-		<apply executable="${xpidl}" dir="${basedir}/components" dest="${basedir}/components">
-			<mapper type="glob" from="*.idl" to="*.xpt"/>
-			<fileset dir="${basedir}/components" includes="*.idl"/>
-			<arg line="-m typelib -w -v"/>
-			<arg value="-I"/>
-			<arg value="c:\\mozilla\\mozilla\\xpcom\\base"/>
-			<arg value="-I"/>
-			<arg value="c:\\mozilla\\mozilla\\uriloader\\base"/>
-			<arg value="-I"/>
-			<arg value="c:\\mozilla\\mozilla\\netwerk\\base\\public"/>
-			<arg value="-I"/>
-			<arg value="c:\\mozilla\\mozilla\\xpcom\\io"/>
-		</apply>
-	</target>
-	
-	<target name="package" depends="components">
+	<target name="package">
 		<zip destfile="${basedir}/${ant.project.name}.xpi">
 			<fileset dir="${basedir}">
 				<include name="**/*"/>
