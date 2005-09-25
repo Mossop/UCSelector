@@ -51,19 +51,13 @@ var UpdateChannels =
   
   onLoad: function()
   {
-    var em = Components.classes["@mozilla.org/extensions/manager;1"]
-                        .getService(Components.interfaces.nsIExtensionManager);
     var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
                         .getService(Components.interfaces.nsIRDFService);
-    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                        .getService(Components.interfaces.nsIIOService);
-    var fph = ioService.getProtocolHandler("file").QueryInterface(Components.interfaces.nsIFileProtocolHandler);
-
     var updates = Components.classes["@mozilla.org/updates/update-service;1"]
                         .getService(Components.interfaces.nsIApplicationUpdateService);
-
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                           .getService(Components.interfaces.nsIPrefService);
+                          
     UpdateChannels.defaultPrefs = prefService.getDefaultBranch(null);
 
     var directoryService = Components.classes["@mozilla.org/file/directory_service;1"].
@@ -87,12 +81,7 @@ var UpdateChannels =
         UpdateChannels.currentChannel = "default";
       }
   
-      var extensionID = "updatechannel@blueprintit.co.uk";
-      var installLocation = em.getInstallLocation(extensionID);
-      var rdffile = installLocation.getItemFile(extensionID, "channels.rdf");
-      var rdfuri = fph.getURLSpecFromFile(rdffile);
-      
-      UpdateChannels.datasource = rdfService.GetDataSourceBlocking(rdfuri);
+      UpdateChannels.datasource = rdfService.GetDataSourceBlocking("chrome://channels/locale/channels.rdf");
       var list = document.getElementById("channelList");
       var crdf = list.database.QueryInterface(Components.interfaces.nsIRDFCompositeDataSource);
       crdf.AddDataSource(UpdateChannels.datasource);
