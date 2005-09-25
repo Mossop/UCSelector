@@ -43,33 +43,62 @@
    -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://channels/skin/select.css" type="text/css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://channels/locale/channels.dtd">
+<!DOCTYPE wizard [
+<!ENTITY % channelsDTD SYSTEM "chrome://channels/locale/channels.dtd">
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+%channelsDTD;
+%brandDTD;
+]>
 
-<dialog id="SelectUpdateChannel" title="&SelectUpdateChannel.title;" style="width: 400px; height: 400px;"
-        buttons="accept,cancel" ondialogaccept="UpdateChannels.changeChannel()"
+<wizard id="SelectUpdateChannel" title="&SelectUpdateChannel.title;"
+        windowtype="ChannelSelect:Wizard" style="width: &window.width;"
+        onload="UpdateChannels.onLoad()"
+        onwizardfinish="UpdateChannels.onFinish()"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="application/x-javascript" src="chrome://channels/content/channels.js"/>
 
-  <dialogheader title="&SelectUpdateChannel.title;" description="&SelectUpdateChannel.description;"/>
+  <wizardpage id="noupdates" pageid="noupdates" label="&noupdates.label;">
 
-  <hbox pack="start" align="center">
-    
-    <label>&channelList.label;</label>
-    
-    <menulist id="channelList" rows="1" flex="1" oncommand="UpdateChannels.channelSelected()"
-              datasources="rdf:null" ref="urn:blueprintit:updatechannel:root">
-      <template>
-        <menupopup>
-          <menuitem uri="rdf:*"
-                    label="rdf:http://mossop.blueprintit.co.uk/updatechannel#title"/>
-        </menupopup>
-      </template>
-    </menulist>
-    
-  </hbox>
+    <description>&noupdates.description;</description>
+
+  </wizardpage>
   
-  <description id="channelDescription"/>
+  <wizardpage id="choosechannel" pageid="choosechannel" label="&choosechannel.label;">
   
-</dialog>
+    <hbox pack="start" align="center">
+      
+      <label>&channelList.label;</label>
+      
+      <menulist id="channelList" rows="1" flex="1" oncommand="UpdateChannels.channelSelected()"
+                datasources="rdf:null" ref="urn:blueprintit:updatechannel:root">
+        <template>
+          <menupopup>
+            <menuitem uri="rdf:*"
+                      label="rdf:http://mossop.blueprintit.co.uk/updatechannel#title"/>
+          </menupopup>
+        </template>
+      </menulist>
+      
+    </hbox>
+    
+    <description id="channelDescription"/>
+
+  </wizardpage>
+  
+  <wizardpage id="changechannel" pageid="changechannel" label="&changechannel.label;" onpageshow="UpdateChannels.checkDownloadState()">
+  
+    <description>&changechannel.description;</description>
+    
+    <checkbox id="launchUpdate" checked="true" label="&launchUpdate.label;"/>
+  
+    <hbox id="downloading" align="start">
+      <image id="warningIcon"/>
+      <description flex="1">&downloading.label;</description>
+    </hbox>
+    
+  </wizardpage>
+  
+</wizard>

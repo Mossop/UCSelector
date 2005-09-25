@@ -46,18 +46,27 @@ var UpdateChannels =
 {
   selectUpdateChannel: function()
   {
-    window.open("chrome://channels/content/select.xul", "_blank", "chrome,modal,centerscreen");
+    var name = "ChannelSelect:Wizard";
+    var uri = "chrome://channels/content/select.xul";
+    
+    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                       .getService(Components.interfaces.nsIWindowMediator);
+    var win = wm.getMostRecentWindow(name);
+    if (win)
+    {
+      win.focus();
+    }
+    else
+    {
+      var openFeatures = "chrome,centerscreen,dialog=no,resizable=no,titlebar,toolbar=no";
+      var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                         .getService(Components.interfaces.nsIWindowWatcher);
+      var win = ww.openWindow(null, uri, "", openFeatures, null);
+    }
   },
   
   setupPane: function()
   {
-    var directoryService = Components.classes["@mozilla.org/file/directory_service;1"].
-										getService(Components.interfaces.nsIProperties);
-	  dir = directoryService.get("XCurProcD",Components.interfaces.nsIFile);
-    dir.append("defaults");
-    dir.append("pref");
-    dir.append("channel-prefs.js");
-
     var strBundle=document.getElementById("channelslocale");
 
     var hbox = document.getElementById("showUpdateHistory").parentNode;
@@ -65,7 +74,6 @@ var UpdateChannels =
     var button = document.createElement("button");
     button.setAttribute("id","showSelectUpdateChannel");
     button.setAttribute("label",strBundle.getString("update.selectupdatechannel.label"));
-    button.disabled=!dir.isWritable();
     hbox.appendChild(button);
     button.addEventListener("command",UpdateChannels.selectUpdateChannel,false);
     return false;

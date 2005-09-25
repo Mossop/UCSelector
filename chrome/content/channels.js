@@ -44,54 +44,130 @@
 
 var UpdateChannels = 
 {
-  changeChannel: function()
+  currentChannel: null,
+  defaultPrefs: null,
+  datasource: null,
+  channelPrefsFile: null,
+  
+  onLoad: function()
   {
+    var em = Components.classes["@mozilla.org/extensions/manager;1"]
+                        .getService(Components.interfaces.nsIExtensionManager);
+    var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
+                        .getService(Components.interfaces.nsIRDFService);
+    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                        .getService(Components.interfaces.nsIIOService);
+    var fph = ioService.getProtocolHandler("file").QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+
+    var updates = Components.classes["@mozilla.org/updates/update-service;1"]
+                        .getService(Components.interfaces.nsIApplicationUpdateService);
+
+    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                          .getService(Components.interfaces.nsIPrefService);
+    UpdateChannels.defaultPrefs = prefService.getDefaultBranch(null);
+
     var directoryService = Components.classes["@mozilla.org/file/directory_service;1"].
 										getService(Components.interfaces.nsIProperties);
-	  file = directoryService.get("XCurProcD",Components.interfaces.nsIFile);
-    file.append("defaults");
-    file.append("pref");
-    file.append("channel-prefs.js");
-    if (file.isWritable())
+										
+	  UpdateChannels.channelPrefsFile = directoryService.get("XCurProcD",Components.interfaces.nsIFile);
+    UpdateChannels.channelPrefsFile.append("defaults");
+    UpdateChannels.channelPrefsFile.append("pref");
+    UpdateChannels.channelPrefsFile.append("channel-prefs.js");
+
+    if (UpdateChannels.channelPrefsFile.isWritable() && updates.canUpdate)
     {
-      var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                          .getService(Components.interfaces.nsIRDFService);
-  
-      var idprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#id");
-      
-      var list = document.getElementById("channelList");     
-      var ds = list.database;
-      var res = list.selectedItem.resource;
-      var result = ds.GetTarget(res,idprop,true);
-      
+      document.documentElement.goTo("choosechannel");
       var channel = null;
       try
       {
-        result=result.QueryInterface(Components.interfaces.nsIRDFLiteral);
-        channel=result.Value;
-        var line = "pref(\"app.update.channel\", \""+channel+"\");\n";
-
-        var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                         .createInstance(Components.interfaces.nsIFileOutputStream);
-
-        foStream.init(file, 0x02 | 0x08 | 0x20, file.permissions, 0); // write, create, truncate
-        foStream.write(line, line.length);
-        foStream.close();
-
-        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                        .getService(Components.interfaces.nsIPrefService);
+        UpdateChannels.currentChannel = UpdateChannels.defaultPrefs.getCharPref("app.update.channel");
       }
       catch (e)
       {
+        UpdateChannels.currentChannel = "default";
       }
+  
+      var extensionID = "updatechannel@blueprintit.co.uk";
+      var installLocation = em.getInstallLocation(extensionID);
+      var rdffile = installLocation.getItemFile(extensionID, "channels.rdf");
+      var rdfuri = fph.getURLSpecFromFile(rdffile);
+      
+      UpdateChannels.datasource = rdfService.GetDataSourceBlocking(rdfuri);
+      var list = document.getElementById("channelList");
+      var crdf = list.database.QueryInterface(Components.interfaces.nsIRDFCompositeDataSource);
+      crdf.AddDataSource(UpdateChannels.datasource);
+      list.builder.rebuild();
+      
+      var channelnode = rdfService.GetLiteral(UpdateChannels.currentChannel);
+      var idprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#id");
+      var res = UpdateChannels.datasource.GetSource(idprop,channelnode,true);
+      
+      var selected = document.getElementById(res.Value);
+      if (!selected && channel!="default")
+      {
+        selected = document.getElementById("urn:blueprintit:updatechannel:default");
+      }
+      
+      if (selected)
+      {
+        list.selectedItem=selected;
+        UpdateChannels.channelSelected();
+      }
+      else
+      {
+        alert("Bad channel: "+channel);
+      }
+    }
+    else
+    {
+      document.documentElement.canAdvance=false;
     }
   },
   
-  updateDisplay: function()
+  onFinish: function()
   {
+    var updates = Components.classes["@mozilla.org/updates/update-service;1"]
+                        .getService(Components.interfaces.nsIApplicationUpdateService);
+    var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
+                        .getService(Components.interfaces.nsIRDFService);
+
+    var idprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#id");
+    
+    var list = document.getElementById("channelList");     
+    var res = list.selectedItem.resource;
+    var result = UpdateChannels.datasource.GetTarget(res,idprop,true).QueryInterface(Components.interfaces.nsIRDFLiteral);
+    
+    try
+    {
+      var channel=result.Value;
+      var line = "pref(\"app.update.channel\", \""+channel+"\");\n";
+
+      var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+                       .createInstance(Components.interfaces.nsIFileOutputStream);
+
+      foStream.init(UpdateChannels.channelPrefsFile, 0x02 | 0x08 | 0x20, UpdateChannels.channelPrefsFile.permissions, 0); // write, create, truncate
+      foStream.write(line, line.length);
+      foStream.close();
+
+      UpdateChannels.defaultPrefs.setCharPref("app.update.channel",channel);
+      
+      if (updates.isDownloading)
+        updates.pauseDownload();
+        
+      var launch = document.getElementById("launchUpdate");
+      if (launch.checked)
+      {
+        var prompter = Components.classes["@mozilla.org/updates/update-prompt;1"]
+                                  .createInstance(Components.interfaces.nsIUpdatePrompt);
+        prompter.checkForUpdates();
+      }
+    }
+    catch (e)
+    {
+    }
   },
   
-  fetchChannelDetails: function(channel)
+  /*fetchChannelDetails: function(channel)
   {
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefService);
@@ -160,6 +236,14 @@ var UpdateChannels =
       }
     };
     req.send(null); 
+  },*/
+  
+  checkDownloadState: function()
+  {
+    var updates = Components.classes["@mozilla.org/updates/update-service;1"]
+                        .getService(Components.interfaces.nsIApplicationUpdateService);
+    var warning = document.getElementById("downloading");
+    warning.hidden=!updates.isDownloading;
   },
   
   channelSelected: function()
@@ -173,81 +257,27 @@ var UpdateChannels =
     var list = document.getElementById("channelList");
     var desc = document.getElementById("channelDescription");
     
-    var ds = list.database;
     var res = list.selectedItem.resource;
-    var result = ds.GetTarget(res,descprop,true);
-    var id = ds.GetTarget(res,idprop,true);
+    var result = UpdateChannels.datasource.GetTarget(res,descprop,true);
+    var id = UpdateChannels.datasource.GetTarget(res,idprop,true).QueryInterface(Components.interfaces.nsIRDFLiteral);
     
     var text = null;
-    try
+    if (result)
     {
       result=result.QueryInterface(Components.interfaces.nsIRDFLiteral);
       text=result.Value;
-      id=id.QueryInterface(Components.interfaces.nsIRDFLiteral);
-      UpdateChannels.fetchChannelDetails(id.Value);
     }
-    catch (e)
+    else
     {
-      dump(e+"\n");
-      text="No description";
+      text="No description.";
     }
-    
+    document.documentElement.canAdvance=(id.Value != UpdateChannels.currentChannel)
+    //UpdateChannels.fetchChannelDetails(id.Value);
+     
     while (desc.firstChild)
     {
       desc.removeChild(desc.firstChild);
     }
     desc.appendChild(document.createTextNode(text));
-  },
-  
-  setupWindow: function()
-  {
-    var em = Components.classes["@mozilla.org/extensions/manager;1"]
-                        .getService(Components.interfaces.nsIExtensionManager);
-    var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                        .getService(Components.interfaces.nsIRDFService);
-    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                        .getService(Components.interfaces.nsIIOService);
-    var fph = ioService.getProtocolHandler("file").QueryInterface(Components.interfaces.nsIFileProtocolHandler);
-    var defaults = Components.classes["@mozilla.org/preferences-service;1"]
-                        .getService(Components.interfaces.nsIPrefService).getDefaultBranch(null);
-
-    var extensionID = "updatechannel@blueprintit.co.uk";
-    var installLocation = em.getInstallLocation(extensionID);
-    var rdffile = installLocation.getItemFile(extensionID, "channels.rdf");
-    var rdfuri = fph.getURLSpecFromFile(rdffile);
-    
-    var ds = rdfService.GetDataSourceBlocking(rdfuri);
-    var list = document.getElementById("channelList");
-    var crdf = list.database.QueryInterface(Components.interfaces.nsIRDFCompositeDataSource);
-    crdf.AddDataSource(ds);
-    list.builder.rebuild();
-    
-    var channel;
-    try
-    {
-      channel = defaults.getCharPref("app.update.channel");
-    }
-    catch (e)
-    {
-      channel = "default";
-    }
-    
-    var selected = document.getElementById("urn:blueprintit:updatechannel:"+channel);
-    if (!selected && channel!="default")
-    {
-      selected = document.getElementById("urn:blueprintit:updatechannel:default");
-    }
-    
-    if (selected)
-    {
-      list.selectedItem=selected;
-      UpdateChannels.channelSelected();
-    }
-    else
-    {
-      alert("Bad channel: "+channel);
-    }
   }
 };
-
-window.addEventListener("load",UpdateChannels.setupWindow,false);

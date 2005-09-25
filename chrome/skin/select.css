@@ -1,0 +1,4 @@
+#warningIcon {
+  list-style-image: url("chrome://global/skin/icons/notfound.png");
+  margin: 5px 3px 0px 5px;
+}

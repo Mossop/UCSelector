@@ -1,4 +1,13 @@
 <!ENTITY SelectUpdateChannel.title			"Change Update Channel">
-<!ENTITY SelectUpdateChannel.description	"Select the update channel you wish to use">
+<!ENTITY window.width						"36em">
 
+<!ENTITY noupdates.label					"Software update is not functional">
+<!ENTITY noupdates.description				"Software update is not currently functional, most likely due to your current user privileges.">
+
+<!ENTITY choosechannel.label				"Select the new update channel">
 <!ENTITY channelList.label					"Update channel:">
+
+<!ENTITY changechannel.label				"Select the new update channel">
+<!ENTITY changechannel.description			"Clicking Finish will change the update channel. You may choose to launch a check for updates now to download an available build on this channel.">
+<!ENTITY launchUpdate.label					"Check for updates">
+<!ENTITY downloading.label					"&brandShortName; is currently downloading an update. If you change the channel this download will be cancelled.">
