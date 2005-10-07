@@ -68,13 +68,15 @@ var UpdateChannels =
   setupPane: function()
   {
     var strBundle=document.getElementById("channelslocale");
+    
+    var nextButton = document.getElementById("showUpdateHistory");
 
-    var hbox = document.getElementById("showUpdateHistory").parentNode;
+    var hbox = nextButton.parentNode;
     
     var button = document.createElement("button");
     button.setAttribute("id","showSelectUpdateChannel");
     button.setAttribute("label",strBundle.getString("update.selectupdatechannel.label"));
-    hbox.appendChild(button);
+    hbox.insertBefore(button,nextButton);
     button.addEventListener("command",UpdateChannels.selectUpdateChannel,false);
     return false;
   },
