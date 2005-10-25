@@ -4,16 +4,24 @@
      xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
   <Seq about="urn:blueprintit:updatechannel:root">
-    <li resource="urn:blueprintit:updatechannel:default"/>
+    <li resource="urn:blueprintit:updatechannel:release"/>
     <li resource="urn:blueprintit:updatechannel:beta"/>
     <li resource="urn:blueprintit:updatechannel:nightly"/>
+    <li resource="urn:blueprintit:updatechannel:default"/>
   </Seq>
 
+  <Description about="urn:blueprintit:updatechannel:release"
+                   uc:id="release"
+                   uc:title="Release">
+    <uc:description>This release channel will provide stable release versions, including security
+     updates (e.g. Firefox 1.5, 1.5.1 etc.).</uc:description>
+  </Description>
+  
   <Description about="urn:blueprintit:updatechannel:default"
                    uc:id="default"
                    uc:title="Default">
-    <uc:description>The default update channel will receive all release builds and security fixes.
-     Unless you are interesting in testing the latest features, this is the update channel for you.</uc:description>
+    <uc:description>This channel is used when there is no channel information, for example if you
+     build Firefox or Thunderbird yourself. There are no updates on this channel.</uc:description>
   </Description>
 
   <Description about="urn:blueprintit:updatechannel:beta"
