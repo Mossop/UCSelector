@@ -30,7 +30,7 @@
     <em:description>Allows you to change the application update channel.</em:description>
     <em:creator>Mossop</em:creator>
     <em:homepageURL>http://users.blueprintit.co.uk/~dave/web/firefox/updatechannel/index.html</em:homepageURL>
-    <em:updateURL>http://users.blueprintit.co.uk/~dave/web/firefox/update.rdf?guid=%ITEM_ID%&amp;version=%ITEM_VERSION%&amp;app=%APP_ID%&amp;appver=%APP_VERSION%</em:updateURL>
+    <em:updateURL>https://www.oxymoronical.com/web/firefox/@name@/update.rdf?version=%ITEM_VERSION%&amp;status=%ITEM_STATUS%&amp;app=%APP_ID%&amp;appversion=%APP_VERSION%&amp;os=%APP_OS%&amp;abi=%APP_ABI%</em:updateURL>
     
   </Description>      
 </RDF>
