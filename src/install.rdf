@@ -4,8 +4,8 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
-    <em:id>@id@</em:id>
-    <em:version>@version@</em:version>
+    <em:id>${extension.guid}</em:id>
+    <em:version>${extension.fullversion}</em:version>
     
     <!-- Firefox version --> 
     <em:targetApplication>
@@ -29,8 +29,8 @@
     <em:name>Update Channel Selector</em:name>
     <em:description>Allows you to change the application update channel.</em:description>
     <em:creator>Mossop</em:creator>
-    <em:homepageURL>http://www.oxymoronical.com/web/firefox/@name@</em:homepageURL>
-    <em:updateURL>https://www.oxymoronical.com/web/firefox/@name@/update.rdf?version=%ITEM_VERSION%&amp;status=%ITEM_STATUS%&amp;app=%APP_ID%&amp;appversion=%APP_VERSION%&amp;os=%APP_OS%&amp;abi=%APP_ABI%</em:updateURL>
+    <em:homepageURL>http://www.oxymoronical.com/web/firefox/${extension.name}</em:homepageURL>
+    <em:updateURL>https://www.oxymoronical.com/web/firefox/${extension.name}/update.rdf?version=%ITEM_VERSION%&amp;status=%ITEM_STATUS%&amp;app=%APP_ID%&amp;appversion=%APP_VERSION%&amp;os=%APP_OS%&amp;abi=%APP_ABI%</em:updateURL>
     
   </Description>      
 </RDF>
