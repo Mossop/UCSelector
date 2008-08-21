@@ -4,4 +4,5 @@ locale      channels            en-US                               ${extension.
 
 overlay     chrome://browser/content/preferences/preferences.xul    chrome://channels/content/browserprefs.xul
 overlay     chrome://messenger/content/preferences/preferences.xul  chrome://channels/content/messengerprefs.xul
+overlay     chrome://communicator/content/pref/pref-smartupdate.xul chrome://channels/content/suiteprefs.xul
 overlay     chrome://mozapps/content/update/updates.xul             chrome://channels/content/updates.xul

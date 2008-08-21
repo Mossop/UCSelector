@@ -36,7 +36,7 @@
  * ***** END LICENSE BLOCK *****
  */
 
-var UpdateChannels = {
+var UpdateChannelPrefs = {
   selectUpdateChannel: function() {
     var name = "ChannelSelect:Wizard";
     var uri = "chrome://channels/content/select.xul";
@@ -66,18 +66,22 @@ var UpdateChannels = {
     button.setAttribute("id", "showSelectUpdateChannel");
     button.setAttribute("label", strBundle.getString("update.selectupdatechannel.label"));
     hbox.insertBefore(button, nextButton);
-    button.addEventListener("command", UpdateChannels.selectUpdateChannel, false);
+    var self = this;
+    button.addEventListener("command", function() { self.selectUpdateChannel() }, false);
     return false;
   },
 
   registerEventListener: function() {
     var pane = document.getElementById("paneAdvanced");
-    if (pane.loaded)
-      UpdateChannels.setupPane();
-    else
-      pane.addEventListener("paneload", UpdateChannels.setupPane, false);
+    if (pane.loaded) {
+      this.setupPane();
+    }
+    else {
+      var self = this;
+      pane.addEventListener("paneload", function() { self.setupPane() }, false);
+    }
     return false;
   }
 };
 
-window.addEventListener("load", UpdateChannels.registerEventListener, false);
+window.addEventListener("load", function() { UpdateChannelPrefs.registerEventListener() }, false);
