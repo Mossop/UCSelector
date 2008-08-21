@@ -57,31 +57,24 @@ var UpdateChannels = {
   },
 
   pageShow: function() {
+    var channelService = Components.classes["@oxymoronical.com/update/updatechannelservice;1"]
+                                   .getService(Components.interfaces.ucsIUpdateChannelService);
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
                         .getService(Components.interfaces.nsIStringBundleService);
     var brand = sbs.createBundle("chrome://branding/locale/brand.properties");
     var bundle = sbs.createBundle("chrome://channels/locale/channels.properties");
-    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefService);
-    var defaultPrefs = prefService.getDefaultBranch(null);
-
-    var channel = null;
-    try {
-      channel = defaultPrefs.getCharPref("app.update.channel");
-    }
-    catch (e) {
-      channel = "default";
-    }
+    var channel = channelService.currentChannel;
 
     var text = bundle.formatStringFromName("selectedChannel.label",
-                                           [brand.GetStringFromName("brandShortName"), channel], 2);
+                                           [brand.GetStringFromName("brandShortName"), channel.id], 2);
 
     var desc = document.getElementById("selectedChannel");
-    while (desc.firstChild)
-      desc.removeChild(desc.firstChild);
-
-    desc.appendChild(document.createTextNode(text));
+    desc.textContent = text;
   }
 };
 
-document.getElementById("noupdatesfound").addEventListener("pageshow", UpdateChannels.pageShow, false);
+for each (let pane in ["noupdatesfound", "noupdatesautoenabled", "noupdatesautodisabled"]) {
+  var element = document.getElementById(pane);
+  if (element)
+    element.addEventListener("pageshow", function() { UpdateChannels.pageShow() }, false);
+}

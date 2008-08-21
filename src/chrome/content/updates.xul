@@ -47,7 +47,23 @@
 
   <script type="application/x-javascript" src="chrome://channels/content/updates.js"/>
 
-  <wizardpage id="noupdatesfound" onpageshow="gNoUpdatesPage.onPageShow(); UpdateChannels.pageShow();">
+  <wizardpage id="noupdatesfound">
+    <spacer flex="1"/>
+    <hbox align="center">
+      <description id="selectedChannel" flex="1"/>
+      <button oncommand="UpdateChannels.changeChannel()" label="&noupdatesfound.changechannel.label;"/>
+    </hbox>
+  </wizardpage>
+
+  <wizardpage id="noupdatesautoenabled">
+    <spacer flex="1"/>
+    <hbox align="center">
+      <description id="selectedChannel" flex="1"/>
+      <button oncommand="UpdateChannels.changeChannel()" label="&noupdatesfound.changechannel.label;"/>
+    </hbox>
+  </wizardpage>
+
+  <wizardpage id="noupdatesautodisabled">
     <spacer flex="1"/>
     <hbox align="center">
       <description id="selectedChannel" flex="1"/>
