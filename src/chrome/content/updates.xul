@@ -16,7 +16,7 @@
    - The Original Code is Update Channel Selector.
    -
    - The Initial Developer of the Original Code is
-   -     Dave Townsend <dave.townsend@blueprintit.co.uk>.
+   -     Dave Townsend <dtownsend@oxymoronical.com>.
    - Portions created by the Initial Developer are Copyright (C) 2005
    - the Initial Developer. All Rights Reserved.
    -
@@ -35,11 +35,6 @@
    - the terms of any one of the MPL, the GPL or the LGPL.
    -
    - ***** END LICENSE BLOCK *****
-   -
-   - $HeadURL$
-   - $LastChangedBy$
-   - $Date$
-   - $Revision$
    -->
 
 <!DOCTYPE overlay [
@@ -50,23 +45,14 @@
 <overlay id="ChannelsSelectOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://channels/content/updates.js"/>
-
-<wizard id="updates">
+  <script type="application/x-javascript" src="chrome://channels/content/updates.js"/>
 
   <wizardpage id="noupdatesfound" onpageshow="gNoUpdatesPage.onPageShow(); UpdateChannels.pageShow();">
-  
-    <vbox flex="1" pack="end">
-      <hbox align="center">
-        
-        <description id="selectedChannel" flex="1"/>
-        <button oncommand="UpdateChannels.changeChannel()" label="&noupdatesfound.changechannel.label;"/>
-        
-      </hbox>
-    </vbox>
-    
+    <spacer flex="1"/>
+    <hbox align="center">
+      <description id="selectedChannel" flex="1"/>
+      <button oncommand="UpdateChannels.changeChannel()" label="&noupdatesfound.changechannel.label;"/>
+    </hbox>
   </wizardpage>
-
-</wizard>
 
 </overlay>

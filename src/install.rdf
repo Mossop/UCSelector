@@ -6,8 +6,8 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>${extension.guid}</em:id>
     <em:version>${extension.fullversion}</em:version>
-    
-    <!-- Firefox version --> 
+
+    <!-- Firefox version -->
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
@@ -15,7 +15,7 @@
         <em:maxVersion>3.0b4pre</em:maxVersion>
       </Description>
     </em:targetApplication>
-    
+
     <!-- Thunderbird version -->
     <em:targetApplication>
       <Description>
@@ -30,6 +30,6 @@
     <em:description>Allows you to change the application update channel.</em:description>
     <em:creator>Mossop</em:creator>
     <em:homepageURL>http://www.oxymoronical.com/web/firefox/${extension.name}</em:homepageURL>
-    
-  </Description>      
+
+  </Description>
 </RDF>

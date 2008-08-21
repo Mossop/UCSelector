@@ -14,7 +14,7 @@
  * The Original Code is Update Channel Selector.
  *
  * The Initial Developer of the Original Code is
- *      Dave Townsend <dave.townsend@blueprintit.co.uk>.
+ *      Dave Townsend <dtownsend@oxymoronical.com>.
  *
  * Portions created by the Initial Developer are Copyright (C) 2004
  * the Initial Developer. All Rights Reserved.
@@ -34,30 +34,20 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK *****
- *
- * $HeadURL$
- * $LastChangedBy$
- * $Date$
- * $Revision$
- *
  */
 
-var UpdateChannels = 
-{
-  changeChannel: function()
-  {
+var UpdateChannels = {
+  changeChannel: function() {
     var name = "ChannelSelect:Wizard";
     var uri = "chrome://channels/content/select.xul";
-    
+
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                        .getService(Components.interfaces.nsIWindowMediator);
     var win = wm.getMostRecentWindow(name);
-    if (win)
-    {
+    if (win) {
       win.focus();
     }
-    else
-    {
+    else {
       var openFeatures = "chrome,centerscreen,dialog=no,resizable=no,titlebar,toolbar=no";
       var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
                          .getService(Components.interfaces.nsIWindowWatcher);
@@ -65,36 +55,33 @@ var UpdateChannels =
     }
     window.close();
   },
-  
-  pageShow: function()
-  {
-   	var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
-  									.getService(Components.interfaces.nsIStringBundleService);
-  	var brand = sbs.createBundle("chrome://branding/locale/brand.properties");
-  	var bundle = sbs.createBundle("chrome://channels/locale/channels.properties");
+
+  pageShow: function() {
+    var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                        .getService(Components.interfaces.nsIStringBundleService);
+    var brand = sbs.createBundle("chrome://branding/locale/brand.properties");
+    var bundle = sbs.createBundle("chrome://channels/locale/channels.properties");
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(Components.interfaces.nsIPrefService);
+                                .getService(Components.interfaces.nsIPrefService);
     var defaultPrefs = prefService.getDefaultBranch(null);
-    
+
     var channel = null;
-    try
-    {
+    try {
       channel = defaultPrefs.getCharPref("app.update.channel");
     }
-    catch (e)
-    {
+    catch (e) {
       channel = "default";
     }
 
-    var text = bundle.formatStringFromName("selectedChannel.label", [brand.GetStringFromName("brandShortName"), channel],2);
-    
+    var text = bundle.formatStringFromName("selectedChannel.label",
+                                           [brand.GetStringFromName("brandShortName"), channel], 2);
+
     var desc = document.getElementById("selectedChannel");
     while (desc.firstChild)
-    {
       desc.removeChild(desc.firstChild);
-    }
+
     desc.appendChild(document.createTextNode(text));
   }
 };
 
-document.getElementById("noupdatesfound").addEventListener("pageshow",UpdateChannels.pageShow,false);
+document.getElementById("noupdatesfound").addEventListener("pageshow", UpdateChannels.pageShow, false);

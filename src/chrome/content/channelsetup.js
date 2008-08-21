@@ -14,7 +14,7 @@
  * The Original Code is Update Channel Selector.
  *
  * The Initial Developer of the Original Code is
- *      Dave Townsend <dave.townsend@blueprintit.co.uk>.
+ *      Dave Townsend <dtownsend@oxymoronical.com>.
  *
  * Portions created by the Initial Developer are Copyright (C) 2004
  * the Initial Developer. All Rights Reserved.
@@ -34,66 +34,50 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK *****
- *
- * $HeadURL$
- * $LastChangedBy$
- * $Date$
- * $Revision$
- *
  */
 
-var UpdateChannels = 
-{
-  selectUpdateChannel: function()
-  {
+var UpdateChannels = {
+  selectUpdateChannel: function() {
     var name = "ChannelSelect:Wizard";
     var uri = "chrome://channels/content/select.xul";
-    
+
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                        .getService(Components.interfaces.nsIWindowMediator);
     var win = wm.getMostRecentWindow(name);
-    if (win)
-    {
+    if (win) {
       win.focus();
     }
-    else
-    {
+    else {
       var openFeatures = "chrome,centerscreen,dialog=no,resizable=no,titlebar,toolbar=no";
       var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
                          .getService(Components.interfaces.nsIWindowWatcher);
       var win = ww.openWindow(null, uri, "", openFeatures, null);
     }
   },
-  
-  setupPane: function()
-  {
-    var strBundle=document.getElementById("channelslocale");
-    
+
+  setupPane: function() {
+    var strBundle = document.getElementById("channelslocale");
+
     var nextButton = document.getElementById("showUpdateHistory");
 
     var hbox = nextButton.parentNode;
-    
+
     var button = document.createElement("button");
-    button.setAttribute("id","showSelectUpdateChannel");
-    button.setAttribute("label",strBundle.getString("update.selectupdatechannel.label"));
-    hbox.insertBefore(button,nextButton);
-    button.addEventListener("command",UpdateChannels.selectUpdateChannel,false);
+    button.setAttribute("id", "showSelectUpdateChannel");
+    button.setAttribute("label", strBundle.getString("update.selectupdatechannel.label"));
+    hbox.insertBefore(button, nextButton);
+    button.addEventListener("command", UpdateChannels.selectUpdateChannel, false);
     return false;
   },
 
-  registerEventListener: function()
-  {
+  registerEventListener: function() {
     var pane = document.getElementById("paneAdvanced");
     if (pane.loaded)
-    {
       UpdateChannels.setupPane();
-    }
     else
-    {
-      pane.addEventListener('paneload',UpdateChannels.setupPane,false);
-    }
+      pane.addEventListener("paneload", UpdateChannels.setupPane, false);
     return false;
   }
 };
 
-window.addEventListener("load",UpdateChannels.registerEventListener,false);
+window.addEventListener("load", UpdateChannels.registerEventListener, false);

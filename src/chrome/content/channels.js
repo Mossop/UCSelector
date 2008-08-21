@@ -14,7 +14,7 @@
  * The Original Code is Update Channel Selector.
  *
  * The Initial Developer of the Original Code is
- *      Dave Townsend <dave.townsend@blueprintit.co.uk>.
+ *      Dave Townsend <dtownsend@oxymoronical.com>.
  *
  * Portions created by the Initial Developer are Copyright (C) 2004
  * the Initial Developer. All Rights Reserved.
@@ -34,177 +34,147 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK *****
- *
- * $HeadURL$
- * $LastChangedBy$
- * $Date$
- * $Revision$
- *
  */
 
-var UpdateChannels = 
-{
+var UpdateChannels = {
   currentChannel: null,
   defaultPrefs: null,
   datasource: null,
   channelPrefsFile: null,
-  
-  onLoad: function()
-  {
+
+  onLoad: function() {
     var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                        .getService(Components.interfaces.nsIRDFService);
+                               .getService(Components.interfaces.nsIRDFService);
     var updates = Components.classes["@mozilla.org/updates/update-service;1"]
-                        .getService(Components.interfaces.nsIApplicationUpdateService);
+                            .getService(Components.interfaces.nsIApplicationUpdateService);
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(Components.interfaces.nsIPrefService);
-                          
+                                .getService(Components.interfaces.nsIPrefService);
+
     UpdateChannels.defaultPrefs = prefService.getDefaultBranch(null);
 
-    var directoryService = Components.classes["@mozilla.org/file/directory_service;1"].
-										getService(Components.interfaces.nsIProperties);
-										
-	  UpdateChannels.channelPrefsFile = directoryService.get("XCurProcD",Components.interfaces.nsIFile);
+    var directoryService = Components.classes["@mozilla.org/file/directory_service;1"]
+                                     .getService(Components.interfaces.nsIProperties);
+
+    UpdateChannels.channelPrefsFile = directoryService.get("XCurProcD", Components.interfaces.nsIFile);
     UpdateChannels.channelPrefsFile.append("defaults");
     UpdateChannels.channelPrefsFile.append("pref");
     UpdateChannels.channelPrefsFile.append("channel-prefs.js");
 
-    if (UpdateChannels.channelPrefsFile.isWritable() && updates.canUpdate)
-    {
+    if (UpdateChannels.channelPrefsFile.isWritable() && updates.canUpdate) {
       document.documentElement.goTo("choosechannel");
-      try
-      {
+      try {
         UpdateChannels.currentChannel = UpdateChannels.defaultPrefs.getCharPref("app.update.channel");
       }
-      catch (e)
-      {
+      catch (e) {
         UpdateChannels.currentChannel = "default";
       }
-  
+
       UpdateChannels.datasource = rdfService.GetDataSourceBlocking("chrome://channels/locale/channels.rdf");
       var list = document.getElementById("channelList");
       var crdf = list.database.QueryInterface(Components.interfaces.nsIRDFCompositeDataSource);
       crdf.AddDataSource(UpdateChannels.datasource);
       list.builder.rebuild();
-      
+
       var channelnode = rdfService.GetLiteral(UpdateChannels.currentChannel);
       var idprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#id");
-      var res = UpdateChannels.datasource.GetSource(idprop,channelnode,true);
-      
+      var res = UpdateChannels.datasource.GetSource(idprop, channelnode, true);
+
       var selected = document.getElementById(res.Value);
-      if (!selected && channel!="default")
-      {
+      if (!selected && channel != "default")
         selected = document.getElementById("urn:blueprintit:updatechannel:default");
-      }
-      
-      if (selected)
-      {
+
+      if (selected) {
         list.selectedItem=selected;
         UpdateChannels.channelSelected();
       }
-      else
-      {
-        alert("Bad channel: "+channel);
+      else {
+        alert("Bad channel: " + channel);
       }
     }
-    else
-    {
+    else {
       document.documentElement.canAdvance=false;
     }
   },
-  
-  onFinish: function()
-  {
+
+  onFinish: function() {
     var updates = Components.classes["@mozilla.org/updates/update-service;1"]
-                        .getService(Components.interfaces.nsIApplicationUpdateService);
+                            .getService(Components.interfaces.nsIApplicationUpdateService);
     var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                        .getService(Components.interfaces.nsIRDFService);
+                               .getService(Components.interfaces.nsIRDFService);
 
     var idprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#id");
-    
-    var list = document.getElementById("channelList");     
+
+    var list = document.getElementById("channelList");
     var res = list.selectedItem.resource;
-    var result = UpdateChannels.datasource.GetTarget(res,idprop,true).QueryInterface(Components.interfaces.nsIRDFLiteral);
-    
-    try
-    {
-      var channel=result.Value;
+    var result = UpdateChannels.datasource.GetTarget(res, idprop, true)
+                               .QueryInterface(Components.interfaces.nsIRDFLiteral);
+
+    try {
+      var channel = result.Value;
 
       var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                       .createInstance(Components.interfaces.nsIFileOutputStream);
+                               .createInstance(Components.interfaces.nsIFileOutputStream);
 
-      foStream.init(UpdateChannels.channelPrefsFile, 0x02 | 0x08 | 0x20, UpdateChannels.channelPrefsFile.permissions, 0); // write, create, truncate
+      foStream.init(UpdateChannels.channelPrefsFile, 0x02 | 0x08 | 0x20,
+                    UpdateChannels.channelPrefsFile.permissions, 0); // write, create, truncate
 
       var line = "// Update channel changed with Update Channel Selector.\n";
-      foStream.write(line, line.length);      
-      line = "pref(\"app.update.channel\", \""+channel+"\");\n";
+      foStream.write(line, line.length);
+      line = "pref(\"app.update.channel\", \"" + channel + "\");\n";
       foStream.write(line, line.length);
       foStream.close();
 
-      UpdateChannels.defaultPrefs.setCharPref("app.update.channel",channel);
-      
+      UpdateChannels.defaultPrefs.setCharPref("app.update.channel", channel);
+
       if (updates.isDownloading)
         updates.pauseDownload();
-        
+
       var launch = document.getElementById("launchUpdate");
-      if (launch.checked)
-      {
+      if (launch.checked) {
         var prompter = Components.classes["@mozilla.org/updates/update-prompt;1"]
-                                  .createInstance(Components.interfaces.nsIUpdatePrompt);
+                                 .createInstance(Components.interfaces.nsIUpdatePrompt);
         prompter.checkForUpdates();
       }
     }
-    catch (e)
-    {
-    }
+    catch (e) { }
   },
-  
-  /*fetchChannelDetails: function(channel)
-  {
+
+  /*fetchChannelDetails: function(channel) {
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                        .getService(Components.interfaces.nsIPrefService);
+                                .getService(Components.interfaces.nsIPrefService);
     var defaults = prefService.getDefaultBranch(null);
-    prefService=prefService.QueryInterface(Components.interfaces.nsIPrefBranch);
+    prefService = prefService.QueryInterface(Components.interfaces.nsIPrefBranch);
 
     // Use the override URL if specified.
     var url = null;
-    
-    try
-    {
-      url=prefService.getPref("getCharPref", "app.update.url.override");
+
+    try {
+      url = prefService.getPref("getCharPref", "app.update.url.override");
     }
-    catch (e)
-    {
-    }
-    
+    catch (e) { }
+
     // Otherwise, construct the update URL from component parts.
-    if (!url)
-    {
-      try
-      {
+    if (!url) {
+      try {
         url = defaults.getCharPref("app.update.url");
       }
-      catch (e)
-      {
-      }
+      catch (e) { }
     }
-    
-    if (url && url != "")
-    {
+
+    if (url && url != "") {
       var locale = null;
-      try
-      {
+      try {
         return prefService.getComplexValue("general.useragent.locale",
-                                    Components.interfaces.nsIPrefLocalizedString).data;
+                                           Components.interfaces.nsIPrefLocalizedString).data;
       }
-      catch (e)
-      {
+      catch (e) {
         locale = prefService.getCharPref("general.useragent.locale");
       }
- 
-  		var gApp = Components.classes['@mozilla.org/xre/app-info;1']
-  		                .getService(Components.interfaces.nsIXULAppInfo)
-                      .QueryInterface(Components.interfaces.nsIXULRuntime);
-                      
+
+      var gApp = Components.classes['@mozilla.org/xre/app-info;1']
+                           .getService(Components.interfaces.nsIXULAppInfo)
+                           .QueryInterface(Components.interfaces.nsIXULRuntime);
+
       url = url.replace(/%PRODUCT%/g, gApp.name);
       url = url.replace(/%VERSION%/g, gApp.version);
       url = url.replace(/%BUILD_ID%/g, "0000000000");
@@ -213,62 +183,54 @@ var UpdateChannels =
       url = url.replace(/%CHANNEL%/g, channel);
       url = url.replace(/\+/g, "%2B");
     }
-    dump(url+"\n");
+    dump(url + "\n");
     req = new XMLHttpRequest();
     req.open('GET', url, true);
-    req.onreadystatechange = function (aEvt)
-    {
-      if (req.readyState == 4)
-      {
+    req.onreadystatechange = function (aEvt) {
+      if (req.readyState == 4) {
         if(req.status == 200)
           dump(req.responseText+"\n");
         else
           dump("Error loading page\n");
       }
     };
-    req.send(null); 
+    req.send(null);
   },*/
-  
-  checkDownloadState: function()
-  {
+
+  checkDownloadState: function() {
     var updates = Components.classes["@mozilla.org/updates/update-service;1"]
-                        .getService(Components.interfaces.nsIApplicationUpdateService);
+                            .getService(Components.interfaces.nsIApplicationUpdateService);
     var warning = document.getElementById("downloading");
-    warning.hidden=!updates.isDownloading;
+    warning.hidden = !updates.isDownloading;
   },
-  
-  channelSelected: function()
-  {
+
+  channelSelected: function() {
     var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
                         .getService(Components.interfaces.nsIRDFService);
 
     var descprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#description");
     var idprop = rdfService.GetResource("http://mossop.blueprintit.co.uk/updatechannel#id");
-    
+
     var list = document.getElementById("channelList");
     var desc = document.getElementById("channelDescription");
-    
+
     var res = list.selectedItem.resource;
     var result = UpdateChannels.datasource.GetTarget(res,descprop,true);
     var id = UpdateChannels.datasource.GetTarget(res,idprop,true).QueryInterface(Components.interfaces.nsIRDFLiteral);
-    
+
     var text = null;
-    if (result)
-    {
+    if (result) {
       result=result.QueryInterface(Components.interfaces.nsIRDFLiteral);
       text=result.Value;
     }
-    else
-    {
-      text="No description.";
+    else {
+      text = "No description.";
     }
-    document.documentElement.canAdvance=(id.Value != UpdateChannels.currentChannel)
+    document.documentElement.canAdvance = (id.Value != UpdateChannels.currentChannel)
     //UpdateChannels.fetchChannelDetails(id.Value);
-     
+
     while (desc.firstChild)
-    {
       desc.removeChild(desc.firstChild);
-    }
     desc.appendChild(document.createTextNode(text));
   }
 };

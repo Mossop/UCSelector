@@ -16,7 +16,7 @@
    - The Original Code is Update Channel Selector.
    -
    - The Initial Developer of the Original Code is
-   -     Dave Townsend <dave.townsend@blueprintit.co.uk>.
+   -     Dave Townsend <dtownsend@oxymoronical.com>.
    - Portions created by the Initial Developer are Copyright (C) 2005
    - the Initial Developer. All Rights Reserved.
    -
@@ -35,11 +35,6 @@
    - the terms of any one of the MPL, the GPL or the LGPL.
    -
    - ***** END LICENSE BLOCK *****
-   -
-   - $HeadURL$
-   - $LastChangedBy$
-   - $Date$
-   - $Revision$
    -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
@@ -61,17 +56,12 @@
   <script type="application/x-javascript" src="chrome://channels/content/channels.js"/>
 
   <wizardpage id="noupdates" pageid="noupdates" label="&noupdates.label;">
-
     <description>&noupdates.description;</description>
-
   </wizardpage>
-  
+
   <wizardpage id="choosechannel" pageid="choosechannel" label="&choosechannel.label;">
-  
     <hbox pack="start" align="center">
-      
       <label>&channelList.label;</label>
-      
       <menulist id="channelList" rows="1" flex="1" oncommand="UpdateChannels.channelSelected()"
                 datasources="rdf:null" ref="urn:blueprintit:updatechannel:root">
         <template>
@@ -81,24 +71,18 @@
           </menupopup>
         </template>
       </menulist>
-      
     </hbox>
-    
     <description id="channelDescription"/>
-
   </wizardpage>
-  
-  <wizardpage id="changechannel" pageid="changechannel" label="&changechannel.label;" onpageshow="UpdateChannels.checkDownloadState()">
-  
+
+  <wizardpage id="changechannel" pageid="changechannel" label="&changechannel.label;"
+              onpageshow="UpdateChannels.checkDownloadState()">
     <description id="changechanneldesc">&changechannel.description;</description>
-    
     <checkbox id="launchUpdate" checked="true" label="&launchUpdate.label;"/>
-  
     <hbox id="downloading" align="start">
       <image id="warningIcon"/>
       <description flex="1">&downloading.label;</description>
     </hbox>
-    
   </wizardpage>
-  
+
 </wizard>
