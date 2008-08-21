@@ -47,59 +47,23 @@
 <overlay id="ChannelsPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script type="application/x-javascript" src="chrome://channels/content/suiteprefs.js"/>
+
   <preferences id="smartupdate_preferences">
-      <preference id="app.update.channel"
-                  name="app.update.channel"
-                  type="string"
-                  readonly="true"/>
+      <preference id="extensions.updatechannel.channel"
+                  name="extensions.updatechannel.channel"
+                  type="string"/>
   </preferences>
 
   <prefpane id="smartupdate_pane">
     <groupbox>
-      <caption label="&SelectUpdateChannel.title;"/>
       <hbox align="center">
-        <textbox id="app.update.channel.box"
-                 readonly="true"
-                 flex="1"
-                 preference="app.update.channel"
-                 onsyncfrompreference="return UpdateChannels.onSyncFromPreference();"/>
-        <button id="showSelectUpdateChannel"
-                label="&choosechannel.label;"
-                oncommand="UpdateChannels.selectUpdateChannel();"/>
+        <label value="&channelList.label;"/>
+        <menulist id="channelList" preference="extensions.updatechannel.channel"
+                  flex="1">
+          <menupopup/>
+        </menulist>
       </hbox>
     </groupbox>
   </prefpane>
-
-  <script type="application/x-javascript"><![CDATA[
-var UpdateChannels = 
-{
-  selectUpdateChannel: function()
-  {
-    var name = "ChannelSelect:Wizard";
-    var uri = "chrome://channels/content/select.xul";
-    
-    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                       .getService(Components.interfaces.nsIWindowMediator);
-    var win = wm.getMostRecentWindow(name);
-    if (win)
-    {
-      win.focus();
-    }
-    else
-    {
-      var openFeatures = "chrome,centerscreen,dialog=no,resizable=no,titlebar,toolbar=no";
-      var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                         .getService(Components.interfaces.nsIWindowWatcher);
-      var win = ww.openWindow(null, uri, "", openFeatures, null);
-    }
-  },
-
-  onSyncFromPreference: function()
-  {
-    var preference = document.getElementById("app.update.channel");
-    return preference.defaultValue;
-  }
-}
-  ]]></script>
-
 </overlay>

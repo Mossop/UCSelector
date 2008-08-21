@@ -39,7 +39,6 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-const PREF_CHANNEL            = "extensions.updatechannel.channel";
 const PREF_APP_UPDATE_CHANNEL = "app.update.channel";
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -50,16 +49,19 @@ function UpdateChannelService() {
 UpdateChannelService.prototype = {
   channel: null,
   channels: null,
+  prefBranch: null,
 
   init: function() {
     this.channel = "default";
 
     var prefs = Cc["@mozilla.org/preferences-service;1"].
-                getService(Ci.nsIPrefService).
-                QueryInterface(Ci.nsIPrefBranch);
+                getService(Ci.nsIPrefService);
+    this.prefBranch = prefs.getBranch("extensions.updatechannel.")
+                           .QueryInterface(Ci.nsIPrefBranch2);
+    this.prefBranch.addObserver("", this, false);
     var defaults = prefs.getDefaultBranch(null);
     try {
-      this.channel = prefs.getCharPref(PREF_CHANNEL);
+      this.channel = this.prefBranch.getCharPref("channel");
       defaults.setCharPref(PREF_APP_UPDATE_CHANNEL, this.channel);
     }
     catch (e) {
@@ -67,6 +69,7 @@ UpdateChannelService.prototype = {
         this.channel = defaults.getCharPref(PREF_APP_UPDATE_CHANNEL);
       }
       catch (e) { }
+      this.prefBranch.setCharPref("channel", this.channel);
     }
   },
 
@@ -93,13 +96,7 @@ UpdateChannelService.prototype = {
   },
   
   set currentChannel(val) {
-    var prefs = Cc["@mozilla.org/preferences-service;1"].
-                getService(Ci.nsIPrefService).
-                QueryInterface(Ci.nsIPrefBranch);
-    prefs.setCharPref(PREF_CHANNEL, val.id);
-    var defaults = prefs.getDefaultBranch(null);
-    defaults.setCharPref(PREF_APP_UPDATE_CHANNEL, val.id);
-    this.channel = val.id;
+    this.prefBranch.setCharPref("channel", val.id);
   },
 
   getUpdateChannels: function(countRef) {
@@ -116,9 +113,28 @@ UpdateChannelService.prototype = {
         var os = Cc["@mozilla.org/observer-service;1"].
                  getService(Ci.nsIObserverService);
         os.addObserver(this, "profile-after-change", false);
+        os.addObserver(this, "quit-application", false);
         break;
       case "profile-after-change":
         this.init();
+        break;
+      case "nsPref:changed":
+        switch (data) {
+          case "channel":
+            var defaults = Cc["@mozilla.org/preferences-service;1"].
+                           getService(Ci.nsIPrefService).
+                           getDefaultBranch(null);
+            this.channel = this.prefBranch.getCharPref(data);
+            defaults.setCharPref(PREF_APP_UPDATE_CHANNEL, this.channel);
+            break;
+        }
+        break;
+      case "quit-application":
+        os = Cc["@mozilla.org/observer-service;1"].
+             getService(Ci.nsIObserverService);
+        os.removeObserver(this, "profile-after-change");
+        os.removeObserver(this, "quit-application");
+        this.prefBranch.removeObserver("", this);
         break;
     }
   },
