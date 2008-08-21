@@ -38,7 +38,7 @@
     <em:name>Update Channel Selector</em:name>
     <em:description>Allows you to change the application update channel.</em:description>
     <em:creator>Mossop</em:creator>
-    <em:contributor>Philip Chee</contributor>
+    <em:contributor>Philip Chee</em:contributor>
     <em:homepageURL>http://www.oxymoronical.com/web/firefox/${extension.name}</em:homepageURL>
 
   </Description>
