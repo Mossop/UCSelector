@@ -1,7 +1,7 @@
 [{
   "id": "release",
   "title": "Release",
-  "description": "This release channel will provide stable release versions, including security updates (e.g. Firefox 1.5, 1.5.1 etc.)."
+  "description": "This release channel will provide stable release versions, including security updates (e.g. Firefox 3.0, 3.0.1 etc.)."
 }, {
   "id": "default",
   "title": "Default",
