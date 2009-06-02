@@ -87,16 +87,19 @@ UpdateChannelService.prototype = {
   // ucsIUpdateChannelService implementation
   get currentChannel() {
     this.loadChannels();
-
-    for (var i = 0; i < this.channels.length; i++) {
-      if (this.channels[i].id == this.channel)
-        return this.channels[i];
-    }
-    return null;
+    return this.getUpdateChannel(this.channel);
   },
   
   set currentChannel(val) {
     this.prefBranch.setCharPref("channel", val.id);
+  },
+
+  getUpdateChannel: function(id) {
+    for (var i = 0; i < this.channels.length; i++) {
+      if (this.channels[i].id == id)
+        return this.channels[i];
+    }
+    return null;
   },
 
   getUpdateChannels: function(countRef) {

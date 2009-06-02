@@ -38,6 +38,7 @@
    -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://channels/content/channels.css" type="text/css"?>
 <?xml-stylesheet href="chrome://channels/skin/select.css" type="text/css"?>
 
 <!DOCTYPE wizard [
@@ -62,9 +63,8 @@
   <wizardpage id="choosechannel" pageid="choosechannel" label="&choosechannel.label;">
     <hbox pack="start" align="center">
       <label>&channelList.label;</label>
-      <menulist id="channelList" rows="1" flex="1" oncommand="channelSelected()">
-        <menupopup/>
-      </menulist>
+      <menulist id="channelList" class="update-channel-list" flex="1"
+                oncommand="channelSelected()"/>
     </hbox>
     <description id="channelDescription"/>
   </wizardpage>

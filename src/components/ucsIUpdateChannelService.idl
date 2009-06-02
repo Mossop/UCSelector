@@ -51,6 +51,8 @@ interface ucsIUpdateChannelService : nsISupports
 {
   attribute ucsIUpdateChannel currentChannel;
 
+  ucsIUpdateChannel getUpdateChannel(in AString id);
+
   void getUpdateChannels(out unsigned long count,
                          [retval, array, size_is(count)] out ucsIUpdateChannel channels);
 };

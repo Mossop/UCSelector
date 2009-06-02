@@ -54,25 +54,12 @@ function onLoad() {
   }
 
   document.documentElement.goTo("choosechannel");
-  var list = document.getElementById("channelList");
-  var channels = gChannelService.getUpdateChannels({});
-  var current = gChannelService.currentChannel;
-  for (var i = 0; i < channels.length; i++) {
-    var item = document.createElement("menuitem");
-    item.setAttribute("value", channels[i].id);
-    item.setAttribute("label", channels[i].title);
-    list.menupopup.appendChild(item);
-    item.channel = channels[i];
-    if (channels[i] == current)
-      list.selectedItem = item;
-  }
   channelSelected();
 }
 
 function onFinish() {
   var list = document.getElementById("channelList");
-  var channel = list.selectedItem.channel;
-  gChannelService.currentChannel = channel;
+  gChannelService.currentChannel = list.selectedChannel;
 
   if (gUpdates.isDownloading)
     gUpdates.pauseDownload();
@@ -92,7 +79,7 @@ function checkDownloadState() {
 
 function channelSelected() {
   var list = document.getElementById("channelList");
-  var channel = list.selectedItem.channel;
+  var channel = list.selectedChannel;
   var desc = document.getElementById("channelDescription");
   desc.textContent = channel.description;
 

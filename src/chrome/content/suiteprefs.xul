@@ -44,10 +44,10 @@
 %channelsDTD;
 ]>
 
+<?xml-stylesheet href="chrome://channels/content/channels.css" type="text/css"?>
+
 <overlay id="ChannelsPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-  <script type="application/x-javascript" src="chrome://channels/content/suiteprefs.js"/>
 
   <preferences id="smartupdate_preferences">
       <preference id="extensions.updatechannel.channel"
@@ -59,7 +59,7 @@
     <groupbox>
       <hbox align="center">
         <label value="&channelList.label;"/>
-        <menulist id="channelList" preference="extensions.updatechannel.channel"
+        <menulist class="update-channel-list" preference="extensions.updatechannel.channel"
                   flex="1">
           <menupopup/>
         </menulist>

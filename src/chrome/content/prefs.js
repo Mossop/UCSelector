@@ -37,38 +37,17 @@
  */
 
 var UpdateChannelPrefs = {
-  selectUpdateChannel: function() {
-    var name = "ChannelSelect:Wizard";
-    var uri = "chrome://channels/content/select.xul";
-
-    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                       .getService(Components.interfaces.nsIWindowMediator);
-    var win = wm.getMostRecentWindow(name);
-    if (win) {
-      win.focus();
-    }
-    else {
-      var openFeatures = "chrome,centerscreen,dialog=no,resizable=no,titlebar,toolbar=no";
-      var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                         .getService(Components.interfaces.nsIWindowWatcher);
-      var win = ww.openWindow(null, uri, "", openFeatures, null);
-    }
+  toggleChecked: function() {
+    var checkbox = document.getElementById("enableAppUpdate");
+    var list = document.getElementById("channelList");
+    list.disabled = !checkbox.checked;
   },
 
   setupPane: function() {
-    var strBundle = document.getElementById("channelslocale");
+    this.toggleChecked();
 
-    var nextButton = document.getElementById("showUpdateHistory");
-
-    var hbox = nextButton.parentNode;
-
-    var button = document.createElement("button");
-    button.setAttribute("id", "showSelectUpdateChannel");
-    button.setAttribute("label", strBundle.getString("update.selectupdatechannel.label"));
-    hbox.insertBefore(button, nextButton);
-    var self = this;
-    button.addEventListener("command", function() { self.selectUpdateChannel() }, false);
-    return false;
+    var checkbox = document.getElementById("enableAppUpdate");
+    checkbox.addEventListener("command", this.toggleChecked, false);
   },
 
   registerEventListener: function() {
@@ -80,7 +59,6 @@ var UpdateChannelPrefs = {
       var self = this;
       pane.addEventListener("paneload", function() { self.setupPane() }, false);
     }
-    return false;
   }
 };
 

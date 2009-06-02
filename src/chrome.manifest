@@ -2,7 +2,7 @@ content     channels                                                ${extension.
 skin        channels            classic/1.0                         ${extension.chromebase}/skin/
 locale      channels            en-US                               ${extension.chromebase}/locale/en-US/
 
-overlay     chrome://browser/content/preferences/preferences.xul    chrome://channels/content/browserprefs.xul
+overlay     chrome://browser/content/preferences/advanced.xul       chrome://channels/content/browserprefs.xul
 overlay     chrome://messenger/content/preferences/preferences.xul  chrome://channels/content/messengerprefs.xul
 overlay     chrome://communicator/content/pref/pref-smartupdate.xul chrome://channels/content/suiteprefs.xul
 overlay     chrome://mozapps/content/update/updates.xul             chrome://channels/content/updates.xul

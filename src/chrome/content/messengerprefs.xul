@@ -37,13 +37,29 @@
    - ***** END LICENSE BLOCK *****
    -->
 
+<!DOCTYPE overlay [
+<!ENTITY % channelsDTD SYSTEM "chrome://channels/locale/channels.dtd">
+%channelsDTD;
+]>
+
+<?xml-stylesheet href="chrome://channels/content/channels.css" type="text/css"?>
+<?xml-stylesheet href="chrome://channels/skin/prefs.css" type="text/css"?>
+
 <overlay id="ChannelsPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="chrome://channels/content/prefs.js"/>
+  <preferences id="advancedPreferences">
+    <preference id="extensions.updatechannel.channel"
+                name="extensions.updatechannel.channel"
+                type="string"/>
+  </preferences>
 
-<prefpane id="paneAdvanced">
-  <stringbundle id="channelslocale" src="chrome://channels/locale/channels.properties"/>
-</prefpane>
+  <vbox id="autoUpdateGroup">
+    <hbox class="indent" align="center" insertafter="enableAppUpdate">
+      <label value="&channelList.label;"/>
+      <menulist id="channelList" class="update-channel-list" flex="1"
+                preference="extensions.updatechannel.channel"/>
+    </hbox>
+  </vbox>
 
 </overlay>
