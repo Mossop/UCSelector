@@ -127,8 +127,14 @@ UpdateChannelService.prototype = {
             var defaults = Cc["@mozilla.org/preferences-service;1"].
                            getService(Ci.nsIPrefService).
                            getDefaultBranch(null);
-            this.channel = this.prefBranch.getCharPref(data);
-            defaults.setCharPref(PREF_APP_UPDATE_CHANNEL, this.channel);
+            var newchannel = this.prefBranch.getCharPref(data);
+            if (this.channel != newchannel) {
+              var gUpdates = Cc["@mozilla.org/updates/update-service;1"].
+                             getService(Ci.nsIApplicationUpdateService);
+              if (gUpdates.isDownloading)
+                gUpdates.pauseDownload();
+              defaults.setCharPref(PREF_APP_UPDATE_CHANNEL, this.channel);
+            }
             break;
         }
         break;

@@ -61,9 +61,6 @@ function onFinish() {
   var list = document.getElementById("channelList");
   gChannelService.currentChannel = list.selectedChannel;
 
-  if (gUpdates.isDownloading)
-    gUpdates.pauseDownload();
-
   var launch = document.getElementById("launchUpdate");
   if (launch.checked) {
     var prompter = Cc["@mozilla.org/updates/update-prompt;1"].
