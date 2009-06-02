@@ -1,0 +1,3 @@
+menulist.update-channel-list {
+  -moz-binding: url(chrome://channels/content/channels.xml#channellist);
+}
